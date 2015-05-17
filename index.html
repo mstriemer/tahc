@@ -7,6 +7,9 @@
 'use strict';
 
 class TahcSend extends HTMLElement {
+	attachedCallback() {
+		this.messageInput.focus();
+	}
 	createdCallback() {
 		var template = document.querySelector('#tahc-send-template');
 		this.appendChild(document.importNode(template.content, true));
@@ -78,6 +81,9 @@ class TahcBroadcast extends HTMLElement {
 document.registerElement('tahc-broadcast', TahcBroadcast);
 
 class TahcRegister extends HTMLElement {
+	attachedCallback() {
+		this.usernameInput.focus();
+	}
 	createdCallback() {
 		this.form.addEventListener('submit', function (e) {
 			e.preventDefault();
@@ -94,7 +100,10 @@ class TahcRegister extends HTMLElement {
 		return this.querySelector('form');
 	}
 	get username() {
-		return this.querySelector('input[name="username"]').value;
+		return this.usernameInput.value;
+	}
+	get usernameInput() {
+		return this.querySelector('input[name="username"]');
 	}
 }
 document.registerElement('tahc-register', TahcRegister);
