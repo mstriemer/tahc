@@ -61,7 +61,7 @@ var TahcRegister = React.createClass({
     e.preventDefault();
 
     this.props.signIn(this.refs.username.getDOMNode().value);
-  }
-})
+  },
+});
 
 React.render(<TahcApp />, document.body);
