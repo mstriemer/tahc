@@ -17,7 +17,6 @@ class TahcSend extends HTMLElement {
 		this.messageInput.focus();
 	}
 	createdCallback() {
-		var template = document.querySelector('#tahc-send-template');
 		this.innerHTML = tahcSendTemplate;
 		this.form = this.querySelector('form');
 		this.messageInput = this.querySelector('input[name="message"]');
@@ -29,6 +28,7 @@ class TahcSend extends HTMLElement {
 				detail: {
 					sender: this.sender,
 					message: this.message,
+					sentAt: new Date(),
 				},
 			}));
 		}.bind(this));
@@ -59,19 +59,19 @@ document.registerElement('tahc-messages', TahcMessages);
 
 class TahcBroadcast extends HTMLElement {
 	attachedCallback() {
-		var channel = new SharedWorker('/static/js/broadcaster.js?b=2').port;
+		var channel = new SharedWorker('static/js/broadcaster.js').port;
 		channel.start();
 
 		// Register this user.
 		channel.postMessage({register: this.username});
 
 		// Receive a message on the channel.
-		channel.onmessage = function (e) {
+		channel.addEventListener('message', function (e) {
 			this.dispatchEvent(new CustomEvent('message', {
 				bubbles: true,
 				detail: e.data,
 			}));
-		}.bind(this);
+		}.bind(this));
 
 		// Broadcast a message on the channel.
 		document.body.addEventListener('message', function (e) {
