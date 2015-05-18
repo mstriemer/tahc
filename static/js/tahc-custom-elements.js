@@ -1,12 +1,12 @@
 (function() {
-'use strict';
-	
+	'use strict';
+
 	var tahcSendTemplate = `<form>
 		<input type="hidden" name="sender">
 		<input type="text" name="message">
 		<button type="submit">Send</button>
 	</form>`;
-	
+
 	class TahcSend extends HTMLElement {
 		attachedCallback() {
 			this.messageInput.focus();
@@ -15,7 +15,7 @@
 			this.innerHTML = tahcSendTemplate;
 			this.form = this.querySelector('form');
 			this.messageInput = this.querySelector('input[name="message"]');
-	
+
 			this.form.addEventListener('submit', function (e) {
 				e.preventDefault();
 				this.dispatchEvent(new CustomEvent('message', {
@@ -27,7 +27,7 @@
 					},
 				}));
 			}.bind(this));
-			
+
 			this.addEventListener('message', function (e) {
 				this.messageInput.value = '';
 			}.bind(this));
@@ -40,7 +40,7 @@
 		}
 	}
 	document.registerElement('tahc-send', TahcSend);
-	
+
 	class TahcMessages extends HTMLElement {
 		createdCallback() {
 			document.body.addEventListener('message', function (e) {
@@ -51,15 +51,15 @@
 		}
 	}
 	document.registerElement('tahc-messages', TahcMessages);
-	
+
 	class TahcBroadcast extends HTMLElement {
 		attachedCallback() {
 			var channel = new SharedWorker('static/js/broadcaster.js').port;
 			channel.start();
-	
+
 			// Register this user.
 			channel.postMessage({register: this.username});
-	
+
 			// Receive a message on the channel.
 			channel.addEventListener('message', function (e) {
 				this.dispatchEvent(new CustomEvent('message', {
@@ -67,7 +67,7 @@
 					detail: e.data,
 				}));
 			}.bind(this));
-	
+
 			// Broadcast a message on the channel.
 			document.body.addEventListener('message', function (e) {
 				if (e.detail.sender === this.username) {
@@ -80,7 +80,7 @@
 		}
 	}
 	document.registerElement('tahc-broadcast', TahcBroadcast);
-	
+
 	var tahcTemplate = `
 		<tahc-user-info></tahc-user-info>
 		<tahc-broadcast></tahc-broadcast>
@@ -115,7 +115,7 @@
 		}
 	}
 	document.registerElement('tahc-register', TahcRegister);
-	
+
 	class TahcUserInfo extends HTMLElement {
 		attachedCallback() {
 			this.textContent = `Logged in as ${this.getAttribute('sender')}`;
