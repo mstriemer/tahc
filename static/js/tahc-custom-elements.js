@@ -1,5 +1,7 @@
 (function() {
 	'use strict';
+	
+	var messageRepository = new MessageRepository();
 
 	var tahcSendTemplate = `<form>
 		<input type="hidden" name="sender">
@@ -54,26 +56,21 @@
 
 	class TahcBroadcast extends HTMLElement {
 		attachedCallback() {
-			var channel = new SharedWorker('static/js/broadcaster.js').port;
-			channel.start();
-
-			// Register this user.
-			channel.postMessage({register: this.username});
-
-			// Receive a message on the channel.
-			channel.addEventListener('message', function (e) {
-				this.dispatchEvent(new CustomEvent('message', {
-					bubbles: true,
-					detail: e.data,
-				}));
-			}.bind(this));
-
-			// Broadcast a message on the channel.
+			messageRepository.register(this.username);
+			messageRepository.onChange(this.messageReceived.bind(this));
 			document.body.addEventListener('message', function (e) {
 				if (e.detail.sender === this.username) {
-					channel.postMessage(e.detail);
+					messageRepository.add(e.detail);
 				}
 			}.bind(this));
+		}
+		messageReceived(message) {
+			if (message.sender !== this.username) {
+				this.dispatchEvent(new CustomEvent('message', {
+					bubbles: true,
+					detail: message,
+				}));
+			}
 		}
 		get username() {
 			return this.getAttribute('sender');
