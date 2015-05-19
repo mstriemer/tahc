@@ -1,6 +1,6 @@
 (function () {
   'use strict';
- 
+
   window.MessageRepository = class {
     constructor() {
       this.username = null;
@@ -34,6 +34,6 @@
       this.username = username;
       this.channel.postMessage({register: username});
     }
-  }
+  };
 
- })();
+})();

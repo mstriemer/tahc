@@ -65,7 +65,7 @@
     },
     handleSignIn: function (e) {
       e.preventDefault();
-  
+
       this.props.signIn(this.refs.username.getDOMNode().value);
     },
   });
